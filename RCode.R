@@ -81,11 +81,11 @@ write.table(Rep2_pDNA_foo, file = "~/Dropbox/Sample_MPRA_Data/Down_Sampling/Rep2
 
 #########
 #Load the down sampled files
-Rep1_mRNA_DS<-read.table(file="Rep1_mRNA_DownSampled.txt", header=T, sep="\t")
-Rep1_pDNA_DS<-read.table(file="Rep1_pDNA_DownSampled.txt", header=T, sep="\t")
+Rep1_mRNA_DS<-read.table(file="~/Dropbox/Sample_MPRA_Data/Down_Sampling/Rep1_mRNA_DownSampled.txt", header=T, sep="\t")
+Rep1_pDNA_DS<-read.table(file="~/Dropbox/Sample_MPRA_Data/Down_Sampling/Rep1_pDNA_DownSampled.txt", header=T, sep="\t")
 
-Rep2_mRNA_DS<-read.table(file="Rep2_mRNA_DownSampled.txt", header=T, sep="\t")  
-Rep2_pDNA_DS<-read.table(file="Rep2_pDNA_DownSampled.txt", header=T, sep="\t")
+Rep2_mRNA_DS<-read.table(file="~/Dropbox/Sample_MPRA_Data/Down_Sampling/Rep2_mRNA_DownSampled.txt", header=T, sep="\t")  
+Rep2_pDNA_DS<-read.table(file="~/Dropbox/Sample_MPRA_Data/Down_Sampling/Rep2_pDNA_DownSampled.txt", header=T, sep="\t")
 
 #Calc fold increase
 Rep1_DS<-data.frame(cbind(as.character(Rep1_mRNA_DS$Name), (Rep1_mRNA_DS[,6]/sum(Rep1_mRNA_DS[,6]))/(Rep1_pDNA_DS[,6]/sum(Rep1_pDNA_DS[,6])), (Rep1_mRNA_DS[,7]/sum(Rep1_mRNA_DS[,7]))/(Rep1_pDNA_DS[,7]/sum(Rep1_pDNA_DS[,7])), (Rep1_mRNA_DS[,8]/sum(Rep1_mRNA_DS[,8]))/(Rep1_pDNA_DS[,8]/sum(Rep1_pDNA_DS[,8])), (Rep1_mRNA_DS[,9]/sum(Rep1_mRNA_DS[,9]))/(Rep1_pDNA_DS[,9]/sum(Rep1_pDNA_DS[,9])), (Rep1_mRNA_DS[,10]/sum(Rep1_mRNA_DS[,10]))/(Rep1_pDNA_DS[,10]/sum(Rep1_pDNA_DS[,10])), (Rep1_mRNA_DS[,11]/sum(Rep1_mRNA_DS[,11]))/(Rep1_pDNA_DS[,11]/sum(Rep1_pDNA_DS[,11]))))
@@ -101,10 +101,12 @@ FIVPercent<-data.frame(cbind(as.character(Rep1_DS[,1]), as.character(Rep1_DS[,7]
 
 #Clean Each DS for ploting
 CleanDS <- function(FRAME){
-  FRAME<-FRAME[FRAME[,2] != Inf ,]
-  FRAME<-FRAME[FRAME[,3] != Inf ,]
-  FRAME<-FRAME[!is.na(FRAME[,2]),]
-  FRAME<-FRAME[!is.na(FRAME[,3]),]
+  FRAME<-FRAME[as.numeric(as.character(FRAME[,2])) != Inf ,]
+  FRAME<-FRAME[as.numeric(as.character(FRAME[,3])) != Inf ,]
+  FRAME<-FRAME[as.numeric(as.character(FRAME[,2])) > 0 ,]
+  FRAME<-FRAME[as.numeric(as.character(FRAME[,3])) > 0 ,]
+  FRAME<-FRAME[!is.na(as.numeric(as.character(FRAME[,2]))),]
+  FRAME<-FRAME[!is.na(as.numeric(as.character(FRAME[,3]))),]
   return(FRAME)
 }
 
@@ -115,24 +117,117 @@ TWFPercent<-CleanDS(TWFPercent)
 TENPercent<-CleanDS(TENPercent)
 FIVPercent<-CleanDS(FIVPercent)
 
+HUNPercent[,3] <- as.numeric(as.character(HUNPercent[,3]))
+HUNPercent[,2] <- as.numeric(as.character(HUNPercent[,2]))
 
+summary(as.numeric(as.character(HUNPercent[,3])))
+#####100 Percent
 setwd("~/Dropbox/Sample_MPRA_Data/Down_Sampling/")
 setEPS()
 postscript("100Percent.eps")
 
 m <- rbind(c(1, 1), c(2, 3))
-print(m)
 layout(m)
 
-plot(HUNPercent[,2], HUNPercent[,3], pch =16, cex =.1, xlab="Replicate 1", ylab="Replicate 2", las=1, bty="n")
-abline(lm(HUNPercent[,3]~HUNPercent[,2]), col="red")
-mtext(cor(HUNPercent[,2],HUNPercent[,3]), side=3)
+plot(as.numeric(as.character(HUNPercent[,2])), as.numeric(as.character(HUNPercent[,3])), pch =16, cex =.1, xlab="Replicate 1", ylab="Replicate 2", las=1, bty="n")
+abline(lm(as.numeric(as.character(HUNPercent[,3]))~as.numeric(as.character(HUNPercent[,2]))), col="red")
+mtext(cor(as.numeric(as.character(HUNPercent[,2])), as.numeric(as.character(HUNPercent[,3]))), side=3)
 
-hist(CureMAST_d[,9], breaks=200, las=1, bty="n", main="Rep 1", xlab="Fold Enrichment")
-hist(CureMAST_d[,18], breaks=200, las=1, bty="n",  main="Rep 2", xlab="Fold Enrichment")
+hist(as.numeric(as.character(HUNPercent[,2])), breaks=200, las=1, bty="n", main="Rep 1", xlab="Fold Enrichment")
+hist(as.numeric(as.character(HUNPercent[,3])), breaks=200, las=1, bty="n",  main="Rep 2", xlab="Fold Enrichment")
 
 dev.off()
 
+
+#####75 Percent
+setwd("~/Dropbox/Sample_MPRA_Data/Down_Sampling/")
+setEPS()
+postscript("75Percent.eps")
+
+m <- rbind(c(1, 1), c(2, 3))
+layout(m)
+
+plot(as.numeric(as.character(STFPercent[,2])), as.numeric(as.character(STFPercent[,3])), pch =16, cex =.1, xlab="Replicate 1", ylab="Replicate 2", las=1, bty="n")
+abline(lm(as.numeric(as.character(STFPercent[,3]))~as.numeric(as.character(STFPercent[,2]))), col="red")
+mtext(cor(as.numeric(as.character(STFPercent[,2])), as.numeric(as.character(STFPercent[,3]))), side=3)
+
+hist(as.numeric(as.character(STFPercent[,2])), breaks=200, las=1, bty="n", main="Rep 1", xlab="Fold Enrichment")
+hist(as.numeric(as.character(STFPercent[,3])), breaks=200, las=1, bty="n",  main="Rep 2", xlab="Fold Enrichment")
+
+dev.off()
+
+
+#####50 Percent
+setwd("~/Dropbox/Sample_MPRA_Data/Down_Sampling/")
+setEPS()
+postscript("50Percent.eps")
+
+m <- rbind(c(1, 1), c(2, 3))
+layout(m)
+
+plot(as.numeric(as.character(FIFPercent[,2])), as.numeric(as.character(FIFPercent[,3])), pch =16, cex =.1, xlab="Replicate 1", ylab="Replicate 2", las=1, bty="n")
+abline(lm(as.numeric(as.character(FIFPercent[,3]))~as.numeric(as.character(FIFPercent[,2]))), col="red")
+mtext(cor(as.numeric(as.character(FIFPercent[,2])), as.numeric(as.character(FIFPercent[,3]))), side=3)
+
+hist(as.numeric(as.character(FIFPercent[,2])), breaks=150, las=1, bty="n", main="Rep 1", xlab="Fold Enrichment")
+hist(as.numeric(as.character(FIFPercent[,3])), breaks=190, las=1, bty="n",  main="Rep 2", xlab="Fold Enrichment")
+
+dev.off()
+
+
+#####25 Percent
+setwd("~/Dropbox/Sample_MPRA_Data/Down_Sampling/")
+setEPS()
+postscript("25Percent.eps")
+
+m <- rbind(c(1, 1), c(2, 3))
+layout(m)
+
+plot(as.numeric(as.character(TWFPercent[,2])), as.numeric(as.character(TWFPercent[,3])), pch =16, cex =.1, xlab="Replicate 1", ylab="Replicate 2", las=1, bty="n")
+abline(lm(as.numeric(as.character(TWFPercent[,3]))~as.numeric(as.character(TWFPercent[,2]))), col="red")
+mtext(cor(as.numeric(as.character(TWFPercent[,2])), as.numeric(as.character(TWFPercent[,3]))), side=3)
+
+hist(as.numeric(as.character(TWFPercent[,2])), breaks=150, las=1, bty="n", main="Rep 1", xlab="Fold Enrichment")
+hist(as.numeric(as.character(TWFPercent[,3])), breaks=190, las=1, bty="n",  main="Rep 2", xlab="Fold Enrichment")
+
+dev.off()
+
+
+
+#####10 Percent
+setwd("~/Dropbox/Sample_MPRA_Data/Down_Sampling/")
+setEPS()
+postscript("10Percent.eps")
+
+m <- rbind(c(1, 1), c(2, 3))
+layout(m)
+
+plot(as.numeric(as.character(TENPercent[,2])), as.numeric(as.character(TENPercent[,3])), pch =16, cex =.1, xlab="Replicate 1", ylab="Replicate 2", las=1, bty="n")
+abline(lm(as.numeric(as.character(TENPercent[,3]))~as.numeric(as.character(TENPercent[,2]))), col="red")
+mtext(cor(as.numeric(as.character(TENPercent[,2])), as.numeric(as.character(TENPercent[,3]))), side=3)
+
+hist(as.numeric(as.character(TENPercent[,2])), breaks=150, las=1, bty="n", main="Rep 1", xlab="Fold Enrichment")
+hist(as.numeric(as.character(TENPercent[,3])), breaks=190, las=1, bty="n",  main="Rep 2", xlab="Fold Enrichment")
+
+dev.off()
+
+
+#####5 Percent
+setwd("~/Dropbox/Sample_MPRA_Data/Down_Sampling/")
+setEPS()
+postscript("5Percent.eps")
+
+m <- rbind(c(1, 1), c(2, 3))
+layout(m)
+
+plot(as.numeric(as.character(FIVPercent[,2])), as.numeric(as.character(FIVPercent[,3])), pch =16, cex =.1, xlab="Replicate 1", ylab="Replicate 2", las=1, bty="n")
+abline(lm(as.numeric(as.character(FIVPercent[,3]))~as.numeric(as.character(FIVPercent[,2]))), col="red")
+mtext(cor(as.numeric(as.character(FIVPercent[,2])), as.numeric(as.character(FIVPercent[,3]))), side=3)
+
+hist(as.numeric(as.character(FIVPercent[,2])), breaks=150, las=1, bty="n", main="Rep 1", xlab="Fold Enrichment")
+hist(as.numeric(as.character(FIVPercent[,3])), breaks=190, las=1, bty="n",  main="Rep 2", xlab="Fold Enrichment")
+
+dev.off()
 
 
 
